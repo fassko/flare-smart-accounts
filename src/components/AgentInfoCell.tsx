@@ -8,7 +8,7 @@ export function AgentInfoCell({ vaultAddress }: { vaultAddress: string }) {
   const { agentInfo, isLoading } = useAgentInfo(vaultAddress)
   
   // Extract ownerManagementAddress from agentInfo
-  const ownerManagementAddress = agentInfo && typeof agentInfo === 'object' && agentInfo !== null
+  const ownerManagementAddress = agentInfo && typeof agentInfo === 'object' && agentInfo !== null && !Array.isArray(agentInfo)
     ? (agentInfo as Record<string, unknown>).ownerManagementAddress as string | undefined
     : undefined
 
