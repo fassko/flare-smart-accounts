@@ -8,7 +8,6 @@ export function useAgentName(ownerManagementAddress?: string) {
   const { assetManagerAddress } = useAssetManagerAddress()
 
   // Get settings from AssetManager to extract agentOwnerRegistry address
-  // @ts-expect-error - Type instantiation issue with generated wagmi types
   const { data: settings } = useReadIAssetManager({
     address: assetManagerAddress,
     functionName: 'getSettings',
@@ -18,8 +17,8 @@ export function useAgentName(ownerManagementAddress?: string) {
   })
 
   // Extract agentOwnerRegistry from settings
-  const agentOwnerRegistryAddress = settings && typeof settings === 'object' && settings !== null
-    ? (settings as Record<string, unknown>).agentOwnerRegistry as `0x${string}` | undefined
+  const agentOwnerRegistryAddress = settings && typeof settings === 'object' && settings !== null && !Array.isArray(settings)
+    ? (settings as unknown as Record<string, unknown>).agentOwnerRegistry as `0x${string}` | undefined
     : undefined
 
   // Get agent name from Agent Owner Registry
