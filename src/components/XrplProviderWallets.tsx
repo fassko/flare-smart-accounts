@@ -20,7 +20,7 @@ export function XrplProviderWallets() {
           <table className="w-full border-collapse bg-white rounded-lg border border-gray-200">
             <thead>
               <tr className="bg-gray-100 border-b border-gray-200">
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">#</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Wallet ID</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Wallet Address</th>
               </tr>
             </thead>

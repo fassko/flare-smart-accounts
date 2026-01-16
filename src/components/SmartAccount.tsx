@@ -22,15 +22,17 @@ function SmartAccountInner() {
   return (
     <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-lg border border-gray-200">
       <ContractHeader />
-      <MasterAccountVaults />
+      <div className="mt-6">
+        <PersonalAccountForm />
+      </div>
+      <div className="mt-6">
+        <MasterAccountVaults />
+      </div>
       <div className="mt-6">
         <XrplProviderWallets />
       </div>
       <div className="mt-6">
         <AgentVaults />
-      </div>
-      <div className="mt-6">
-        <PersonalAccountForm />
       </div>
     </div>
   )

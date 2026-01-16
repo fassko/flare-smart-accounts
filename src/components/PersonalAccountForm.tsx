@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { usePersonalAccount } from '../hooks/usePersonalAccount'
 import { getExplorerAddressUrl, getXrplExplorerAddressUrl, formatAddress, isXrplAddress } from '../lib/utils'
+import { TokenBalances } from './TokenBalances'
 
 export function PersonalAccountForm() {
   const [xrplAddressInput, setXrplAddressInput] = useState('')
@@ -73,17 +74,24 @@ export function PersonalAccountForm() {
                   : (typeof personalAccount === 'bigint' ? personalAccount.toString() : String(personalAccount || ''))
                 const isAddress = accountStr.startsWith('0x') && accountStr.length === 42
                 
-                return isAddress ? (
-                  <a
-                    href={getExplorerAddressUrl(accountStr)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#E6007A] hover:text-[#C40066] underline font-mono text-sm"
-                  >
-                    {accountStr}
-                  </a>
-                ) : (
-                  <p className="text-sm text-gray-700 font-mono">{accountStr}</p>
+                return (
+                  <div>
+                    {isAddress ? (
+                      <a
+                        href={getExplorerAddressUrl(accountStr)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#E6007A] hover:text-[#C40066] underline font-mono text-sm"
+                      >
+                        {accountStr}
+                      </a>
+                    ) : (
+                      <p className="text-sm text-gray-700 font-mono">{accountStr}</p>
+                    )}
+                    {isAddress && (
+                      <TokenBalances accountAddress={accountStr} />
+                    )}
+                  </div>
                 )
               })()}
             </div>
