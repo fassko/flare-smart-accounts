@@ -1,14 +1,16 @@
 # Smart Accounts
 
-A Next.js application for making [Fassets](https://dev.flare.network/fassets/overview) FXRP payments on the Flare Coston2 testnet using the [Flare Wagmi periphery package](https://www.npmjs.com/package/@flarenetwork/flare-wagmi-periphery-package).
+A Next.js application for managing Flare Smart Accounts on the Flare Coston2 testnet using the [Flare Wagmi periphery package](https://www.npmjs.com/package/@flarenetwork/flare-wagmi-periphery-package).
 
 ## Features
 
-- Connect wallet using Web3 wallets (MetaMask, etc.)
-- View FXRP balance
-- Send FXRP tokens to any address
-- Real-time transaction status
-- Built with Next.js, Wagmi, and Tailwind CSS
+- **Smart Account Master Controller** - View the master controller contract address
+- **Get Personal Account** - Look up personal accounts by XRPL address and view token balances
+- **Token Balances** - Display FXRP token balances for personal accounts in a table format
+- **Master Account Vaults** - View all vaults associated with the master account
+- **Agent Vaults** - Display agent vaults with detailed information
+- **XRPL Provider Wallets** - List XRPL provider wallet addresses
+- Built with Next.js, Wagmi, Viem, and Tailwind CSS
 
 ## Dynamic FXRP Address Resolution
 
@@ -34,21 +36,8 @@ npm run dev
 
 3. Open [http://localhost:3000](http://localhost:3000) with your browser
 
-4. Connect your wallet and switch to the Coston2 network
+4. Connect your wallet and switch to the desired Flare network (Coston2 recommended for testing)
 
-## Technical Implementation
+## Public Deploy
 
-- **Contract ABIs**: Flare contracts use minimal required function signatures  
-- **Dynamic Address**: FXRP address fetched via FlareContractsRegistry
-- **Type Safety**: Full TypeScript implementation
-
-## Network Configuration
-
-The app is configured for Flare Testnet (Coston2) using the official wagmi chain:
-- Chain ID: 114
-- Name: Flare Testnet
-- Uses official `flareTestnet` from `@wagmi/chains`
-
-# Public Deploy
-
-You can access it on [smart-accounts.vercel.app](https://smart-accounts.vercel.app/).
+You can access the application on [flare-smart-accounts.vercel.app](https://flare-smart-accounts.vercel.app/).
