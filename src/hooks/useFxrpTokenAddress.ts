@@ -9,7 +9,8 @@ import { useAssetManagerAddress } from './useAssetManagerAddress'
 export function useFxrpTokenAddress() {
   const { assetManagerAddress, isLoading: isLoadingAddress, error: addressError } = useAssetManagerAddress()
 
-  // @ts-expect-error - Type instantiation issue with generated wagmi types
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore - Type instantiation is excessively deep with generated wagmi types
   const { data: fxrpAddress, isLoading: isLoadingFxrp, error: fxrpError } = useReadIAssetManager({
     address: assetManagerAddress,
     functionName: 'fAsset',
