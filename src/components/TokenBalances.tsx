@@ -28,6 +28,22 @@ function ERC20TokenRow({ tokenAddress, accountAddress }: { tokenAddress: string;
       <td className="px-4 py-3 text-sm text-gray-700 font-mono">
         {tokenData.formattedBalance || '0'}
       </td>
+      <td className="px-4 py-3 text-sm text-gray-700 font-mono">
+        {tokenData.assetName || ''}
+      </td>
+      <td className="px-4 py-3 text-sm text-gray-700 font-mono">
+        {tokenData.assetSymbol || ''}
+      </td>
+      <td className="px-4 py-3 text-sm text-gray-700 font-mono">
+        <a
+          href={getExplorerAddressUrl(tokenData.assetManager)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#E6007A] hover:text-[#C40066] underline font-mono"
+        >
+        {formatAddress(tokenData.assetManager)}
+        </a>
+      </td>
     </tr>
   )
 }
@@ -56,6 +72,9 @@ export function TokenBalances({ accountAddress }: { accountAddress: string }) {
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Symbol</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Address</th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Balance</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Asset Name</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Asset Symbol</th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Asset Manager</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
