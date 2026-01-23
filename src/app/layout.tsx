@@ -4,8 +4,8 @@ import "./globals.css";
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
-  title: "Smart Accounts",
-  description: "Smart Accounts on Coston2 using Flare Network",
+  title: "FlareSmart Accounts",
+  description: "Flare Smart Accounts on Coston2 using Flare Network",
   icons: {
     icon: [
       { url: '/favicon/favicon.ico' },
