@@ -20,12 +20,19 @@ export function getMergedVaults(vaultsData: unknown): Array<{ vaultId: unknown; 
 
   // Merge arrays by index
   const maxLength = Math.max(vaultIds.length, vaultAddresses.length, vaultTypes.length)
-  
-  return Array.from({ length: maxLength }, (_, i) => ({
+
+  const mergedVaults = Array.from({ length: maxLength }, (_, i) => ({
     vaultId: vaultIds[i],
     vaultAddress: vaultAddresses[i],
     vaultType: vaultTypes[i],
   }))
+
+  // Sort by vaultId
+  return mergedVaults.sort((a, b) => {
+    const idA = typeof a.vaultId === 'bigint' ? a.vaultId : BigInt(String(a.vaultId ?? 0))
+    const idB = typeof b.vaultId === 'bigint' ? b.vaultId : BigInt(String(b.vaultId ?? 0))
+    return idA < idB ? -1 : idA > idB ? 1 : 0
+  })
 }
 
 export function getMergedAgentVaults(agentVaultsData: unknown): Array<{ agentVaultId: unknown; agentVaultAddress: unknown }> {

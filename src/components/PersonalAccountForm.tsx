@@ -2,13 +2,26 @@
 
 import { useState } from 'react'
 import { usePersonalAccount } from '../hooks/usePersonalAccount'
+import { useVaultDetails } from '../hooks/useVaultDetails'
 import { getExplorerAddressUrl, getXrplExplorerAddressUrl, formatAddress, isXrplAddress } from '../lib/utils'
 import { TokenBalances } from './TokenBalances'
+import { VaultBalances } from './VaultBalances'
 
 export function PersonalAccountForm() {
   const [xrplAddressInput, setXrplAddressInput] = useState('')
   const [submittedXrplAddress, setSubmittedXrplAddress] = useState('')
-  const { personalAccount, isLoading, error } = usePersonalAccount(submittedXrplAddress)
+  const { personalAccount, isLoading: isLoadingAccount, error: accountError } = usePersonalAccount(submittedXrplAddress)
+
+  const personalAccountStr = personalAccount as string | undefined
+
+  const isValidAddress = personalAccountStr?.startsWith('0x') && personalAccountStr?.length === 42
+
+  const { vaultsWithDetails, isLoading: isLoadingVaults, error: vaultsError } = useVaultDetails(
+    isValidAddress ? personalAccountStr : undefined
+  )
+
+  const isLoading = isLoadingAccount || isLoadingVaults
+  const error = accountError || vaultsError
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -65,35 +78,21 @@ export function PersonalAccountForm() {
             <p className="text-gray-800">Loading personal account...</p>
           ) : error ? (
             <p className="text-red-600">Error: {error.message}</p>
-          ) : personalAccount !== null && personalAccount !== undefined ? (
+          ) : personalAccountStr && isValidAddress ? (
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <h3 className="text-sm font-semibold text-gray-900 mb-2">Personal Account:</h3>
-              {(() => {
-                const accountStr = typeof personalAccount === 'string' 
-                  ? personalAccount 
-                  : (typeof personalAccount === 'bigint' ? personalAccount.toString() : String(personalAccount || ''))
-                const isAddress = accountStr.startsWith('0x') && accountStr.length === 42
-                
-                return (
-                  <div>
-                    {isAddress ? (
-                      <a
-                        href={getExplorerAddressUrl(accountStr)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#E6007A] hover:text-[#C40066] underline font-mono text-sm"
-                      >
-                        {accountStr}
-                      </a>
-                    ) : (
-                      <p className="text-sm text-gray-700 font-mono">{accountStr}</p>
-                    )}
-                    {isAddress && (
-                      <TokenBalances accountAddress={accountStr} />
-                    )}
-                  </div>
-                )
-              })()}
+              <div>
+                <a
+                  href={getExplorerAddressUrl(personalAccountStr)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#E6007A] hover:text-[#C40066] underline font-mono text-sm"
+                >
+                  {personalAccountStr}
+                </a>
+                <TokenBalances accountAddress={personalAccountStr} />
+                <VaultBalances vaultsWithDetails={vaultsWithDetails} />
+              </div>
             </div>
           ) : (
             <p className="text-gray-600">No personal account found for this XRPL address</p>

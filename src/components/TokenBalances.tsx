@@ -4,7 +4,6 @@ import { useERC20Balance } from '../hooks/useTokenBalances'
 import { useFxrpTokenAddress } from '../hooks/useFxrpTokenAddress'
 import { getExplorerAddressUrl, formatAddress } from '../lib/utils'
 
-// Component to render a single ERC20 token balance row
 function ERC20TokenRow({ tokenAddress, accountAddress }: { tokenAddress: string; accountAddress: string }) {
   const tokenData = useERC20Balance(tokenAddress, accountAddress)
 
@@ -41,7 +40,7 @@ function ERC20TokenRow({ tokenAddress, accountAddress }: { tokenAddress: string;
           rel="noopener noreferrer"
           className="text-[#E6007A] hover:text-[#C40066] underline font-mono"
         >
-        {formatAddress(tokenData.assetManager)}
+          {formatAddress(tokenData.assetManager)}
         </a>
       </td>
     </tr>
@@ -50,16 +49,16 @@ function ERC20TokenRow({ tokenAddress, accountAddress }: { tokenAddress: string;
 
 export function TokenBalances({ accountAddress }: { accountAddress: string }) {
   const { fxrpAddress, isLoading: isLoadingFxrp } = useFxrpTokenAddress()
+  const fxrpBalance = useERC20Balance(fxrpAddress || '', accountAddress)
 
-  const allTokenAddresses = fxrpAddress ? [fxrpAddress] : []
+  const hasTokenBalance = fxrpBalance.balance && fxrpBalance.balance > BigInt(0)
 
-  if (isLoadingFxrp) {
-    return <p className="text-sm text-gray-600">Loading token balances...</p>
+  if (isLoadingFxrp || fxrpBalance.isLoading) {
+    return null
   }
 
-  // Check if we have any balances to show
-  if (allTokenAddresses.length === 0) {
-    return <p className="text-sm text-gray-600">No token balances found</p>
+  if (!fxrpAddress || !hasTokenBalance) {
+    return null
   }
 
   return (
@@ -78,9 +77,7 @@ export function TokenBalances({ accountAddress }: { accountAddress: string }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {allTokenAddresses.map((tokenAddress, index) => (
-              <ERC20TokenRow key={`erc20-${index}`} tokenAddress={tokenAddress} accountAddress={accountAddress} />
-            ))}
+            <ERC20TokenRow tokenAddress={fxrpAddress} accountAddress={accountAddress} />
           </tbody>
         </table>
       </div>
