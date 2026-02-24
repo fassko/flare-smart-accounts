@@ -3,11 +3,13 @@
 import { useReadContracts } from 'wagmi'
 import { erc20Abi, erc4626Abi, type Address } from 'viem'
 import { useMasterAccountVaults } from './useMasterAccountVaults'
+import { useNetworkContext } from '../context/NetworkContext'
 
 const fullVaultAbi = [...erc20Abi, ...erc4626Abi]
 
 export function useVaultDetails(personalAccountAddress?: string) {
   const { vaults, isLoading: isLoadingVaults, error: vaultsError } = useMasterAccountVaults()
+  const { chainId } = useNetworkContext()
 
   const { data: vaultDetails, isLoading: isLoadingDetails, error: detailsError } = useReadContracts({
     contracts: vaults.flatMap((vault) => [
@@ -15,22 +17,26 @@ export function useVaultDetails(personalAccountAddress?: string) {
         address: vault.vaultAddress as Address,
         abi: fullVaultAbi,
         functionName: 'name',
+        chainId,
       },
       {
         address: vault.vaultAddress as Address,
         abi: fullVaultAbi,
         functionName: 'symbol',
+        chainId,
       },
       {
         address: vault.vaultAddress as Address,
         abi: fullVaultAbi,
         functionName: 'decimals',
+        chainId,
       },
       {
         address: vault.vaultAddress as Address,
         abi: fullVaultAbi,
         functionName: 'balanceOf',
         args: [personalAccountAddress as Address],
+        chainId,
       },
     ]),
     query: {

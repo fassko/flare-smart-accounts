@@ -1,19 +1,25 @@
 'use client'
 
-import { useReadIMasterAccountController } from '@flarenetwork/flare-wagmi-periphery-package/contracts/coston2'
-import { useReadContracts } from 'wagmi'
+import { useReadContract, useReadContracts } from 'wagmi'
+import { iMasterAccountControllerAbi as coston2Abi } from '@flarenetwork/flare-wagmi-periphery-package/contracts/coston2'
+import { iMasterAccountControllerAbi as flareAbi } from '@flarenetwork/flare-wagmi-periphery-package/contracts/flare'
 import { erc20Abi, erc4626Abi, type Address } from 'viem'
 import { getMergedVaults } from '../lib/vaultUtils'
 import { useMasterAccountControllerAddress } from './useMasterAccountControllerAddress'
+import { useNetworkContext } from '../context/NetworkContext'
 
 const fullVaultAbi = [...erc20Abi, ...erc4626Abi]
 
 export function useMasterAccountVaults() {
   const { masterAccountControllerAddress } = useMasterAccountControllerAddress()
+  const { chainId, isTestnet } = useNetworkContext()
+  const abi = isTestnet ? coston2Abi : flareAbi
 
-  const { data: vaults, isLoading: isLoadingVaults, error: vaultsError } = useReadIMasterAccountController({
+  const { data: vaults, isLoading: isLoadingVaults, error: vaultsError } = useReadContract({
     address: masterAccountControllerAddress,
+    abi,
     functionName: 'getVaults',
+    chainId,
   })
 
   const mergedVaults = getMergedVaults(vaults)
@@ -24,11 +30,13 @@ export function useMasterAccountVaults() {
         address: vault.vaultAddress as Address,
         abi: fullVaultAbi,
         functionName: 'name',
+        chainId,
       },
       {
         address: vault.vaultAddress as Address,
         abi: fullVaultAbi,
         functionName: 'symbol',
+        chainId,
       },
     ]),
     query: {

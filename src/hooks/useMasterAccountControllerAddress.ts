@@ -1,13 +1,21 @@
 'use client'
 
-import { useReadIFlareContractRegistry } from '@flarenetwork/flare-wagmi-periphery-package/contracts/coston2'
+import { useReadContract } from 'wagmi'
+import { iFlareContractRegistryAbi as coston2Abi } from '@flarenetwork/flare-wagmi-periphery-package/contracts/coston2'
+import { iFlareContractRegistryAbi as flareAbi } from '@flarenetwork/flare-wagmi-periphery-package/contracts/flare'
 import { FLARE_CONTRACT_REGISTRY_ADDRESS } from '../lib/constants'
+import { useNetworkContext } from '../context/NetworkContext'
 
 export function useMasterAccountControllerAddress() {
-  const { data: masterAccountControllerAddress, isLoading, error } = useReadIFlareContractRegistry({
+  const { chainId, isTestnet } = useNetworkContext()
+  const abi = isTestnet ? coston2Abi : flareAbi
+
+  const { data: masterAccountControllerAddress, isLoading, error } = useReadContract({
     address: FLARE_CONTRACT_REGISTRY_ADDRESS,
+    abi,
     functionName: 'getContractAddressByName',
     args: ['MasterAccountController'],
+    chainId,
   })
 
   return {

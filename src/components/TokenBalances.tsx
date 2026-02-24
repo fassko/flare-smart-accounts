@@ -3,9 +3,11 @@
 import { useERC20Balance } from '../hooks/useTokenBalances'
 import { useFxrpTokenAddress } from '../hooks/useFxrpTokenAddress'
 import { getExplorerAddressUrl, formatAddress } from '../lib/utils'
+import { useNetworkContext } from '../context/NetworkContext'
 
 function ERC20TokenRow({ tokenAddress, accountAddress }: { tokenAddress: string; accountAddress: string }) {
   const tokenData = useERC20Balance(tokenAddress, accountAddress)
+  const { isTestnet } = useNetworkContext()
 
   if (!tokenData.balance || tokenData.balance === BigInt(0)) return null
 
@@ -16,7 +18,7 @@ function ERC20TokenRow({ tokenAddress, accountAddress }: { tokenAddress: string;
       </td>
       <td className="px-4 py-3 text-sm text-gray-700">
         <a
-          href={getExplorerAddressUrl(tokenAddress)}
+          href={getExplorerAddressUrl(tokenAddress, isTestnet)}
           target="_blank"
           rel="noopener noreferrer"
           className="text-[#E6007A] hover:text-[#C40066] underline font-mono"
@@ -35,7 +37,7 @@ function ERC20TokenRow({ tokenAddress, accountAddress }: { tokenAddress: string;
       </td>
       <td className="px-4 py-3 text-sm text-gray-700 font-mono">
         <a
-          href={getExplorerAddressUrl(tokenData.assetManager)}
+          href={getExplorerAddressUrl(tokenData.assetManager, isTestnet)}
           target="_blank"
           rel="noopener noreferrer"
           className="text-[#E6007A] hover:text-[#C40066] underline font-mono"

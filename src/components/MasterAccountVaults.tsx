@@ -3,9 +3,11 @@
 import { useMasterAccountVaults } from '../hooks/useMasterAccountVaults'
 import { getExplorerAddressUrl, formatAddress } from '../lib/utils'
 import { getVaultTypeName, getVaultTypeBadgeClasses } from '../lib/vaultUtils'
+import { useNetworkContext } from '../context/NetworkContext'
 
 export function MasterAccountVaults() {
   const { vaults, isLoading, error } = useMasterAccountVaults()
+  const { isTestnet } = useNetworkContext()
 
   return (
     <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -44,7 +46,7 @@ export function MasterAccountVaults() {
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {isAddress ? (
                         <a
-                          href={getExplorerAddressUrl(addressStr)}
+                          href={getExplorerAddressUrl(addressStr, isTestnet)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-[#E6007A] hover:text-[#C40066] underline font-mono"

@@ -4,6 +4,7 @@ import { getExplorerAddressUrl } from '../lib/utils'
 import { DROPS_PER_XRP } from '../lib/constants'
 import { useDefaultInstructionFee } from '../hooks/useDefaultInstructionFee'
 import { useMasterAccountControllerAddress } from '../hooks/useMasterAccountControllerAddress'
+import { useNetworkContext } from '../context/NetworkContext'
 
 function formatDropsToXrp(drops: bigint): string {
   const xrp = Number(drops) / Number(DROPS_PER_XRP)
@@ -13,6 +14,7 @@ function formatDropsToXrp(drops: bigint): string {
 export function ContractHeader() {
   const { fee, isLoading, error } = useDefaultInstructionFee()
   const { masterAccountControllerAddress } = useMasterAccountControllerAddress()
+  const { isTestnet } = useNetworkContext()
 
   return (
     <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200 space-y-2">
@@ -20,7 +22,7 @@ export function ContractHeader() {
         Smart Account Master Controller:{' '}
         {masterAccountControllerAddress ? (
           <a
-            href={getExplorerAddressUrl(masterAccountControllerAddress)}
+            href={getExplorerAddressUrl(masterAccountControllerAddress, isTestnet)}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#E6007A] hover:text-[#C40066] underline font-mono"

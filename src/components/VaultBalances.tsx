@@ -2,6 +2,7 @@
 
 import { getExplorerAddressUrl, formatAddress } from '../lib/utils'
 import { getVaultTypeName, getVaultTypeBadgeClasses } from '../lib/vaultUtils'
+import { useNetworkContext } from '../context/NetworkContext'
 
 export interface VaultWithDetails {
   vaultId: unknown
@@ -14,6 +15,7 @@ export interface VaultWithDetails {
 }
 
 export function VaultBalances({ vaultsWithDetails }: { vaultsWithDetails: VaultWithDetails[] }) {
+  const { isTestnet } = useNetworkContext()
   const vaultsWithPositiveBalance = vaultsWithDetails.filter(
     (vault) => vault.balance && vault.balance > BigInt(0)
   )
@@ -54,7 +56,7 @@ export function VaultBalances({ vaultsWithDetails }: { vaultsWithDetails: VaultW
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-700">
                   <a
-                    href={getExplorerAddressUrl(vault.vaultAddress as string)}
+                    href={getExplorerAddressUrl(vault.vaultAddress as string, isTestnet)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#E6007A] hover:text-[#C40066] underline font-mono"

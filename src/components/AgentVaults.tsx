@@ -4,9 +4,11 @@ import { useAgentVaults } from '../hooks/useAgentVaults'
 import { getExplorerAddressUrl, formatAddress } from '../lib/utils'
 import { getMergedAgentVaults } from '../lib/vaultUtils'
 import { AgentInfoCell } from './AgentInfoCell'
+import { useNetworkContext } from '../context/NetworkContext'
 
 export function AgentVaults() {
   const { agentVaults, isLoading, error } = useAgentVaults()
+  const { isTestnet } = useNetworkContext()
 
   return (
     <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
@@ -47,7 +49,7 @@ export function AgentVaults() {
                       <td className="px-4 py-3 text-sm text-gray-700">
                         {isAddress ? (
                           <a
-                            href={getExplorerAddressUrl(addressStr)}
+                            href={getExplorerAddressUrl(addressStr, isTestnet)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-[#E6007A] hover:text-[#C40066] underline font-mono"

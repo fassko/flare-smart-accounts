@@ -6,8 +6,10 @@ import { useVaultDetails } from '../hooks/useVaultDetails'
 import { getExplorerAddressUrl, getXrplExplorerAddressUrl, formatAddress, isXrplAddress } from '../lib/utils'
 import { TokenBalances } from './TokenBalances'
 import { VaultBalances } from './VaultBalances'
+import { useNetworkContext } from '../context/NetworkContext'
 
 export function PersonalAccountForm() {
+  const { isTestnet } = useNetworkContext()
   const [xrplAddressInput, setXrplAddressInput] = useState('')
   const [submittedXrplAddress, setSubmittedXrplAddress] = useState('')
   const { personalAccount, isLoading: isLoadingAccount, error: accountError } = usePersonalAccount(submittedXrplAddress)
@@ -66,7 +68,7 @@ export function PersonalAccountForm() {
           <div className="mb-2 flex items-center gap-2">
             <span className="text-sm text-gray-700">Querying:</span>
             <a
-              href={getXrplExplorerAddressUrl(submittedXrplAddress)}
+              href={getXrplExplorerAddressUrl(submittedXrplAddress, isTestnet)}
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-[#E6007A] hover:text-[#C40066] underline font-mono"
@@ -83,7 +85,7 @@ export function PersonalAccountForm() {
               <h3 className="text-sm font-semibold text-gray-900 mb-2">Personal Account:</h3>
               <div>
                 <a
-                  href={getExplorerAddressUrl(personalAccountStr)}
+                  href={getExplorerAddressUrl(personalAccountStr, isTestnet)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#E6007A] hover:text-[#C40066] underline font-mono text-sm"

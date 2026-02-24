@@ -2,9 +2,11 @@
 
 import { useXrplProviderWallets } from '../hooks/useXrplProviderWallets'
 import { getExplorerAddressUrl, getXrplExplorerAddressUrl, formatAddress, isXrplAddress } from '../lib/utils'
+import { useNetworkContext } from '../context/NetworkContext'
 
 export function XrplProviderWallets() {
   const { wallets, isLoading, error } = useXrplProviderWallets()
+  const { isTestnet } = useNetworkContext()
 
   return (
     <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
@@ -38,7 +40,7 @@ export function XrplProviderWallets() {
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {isXrplAddr ? (
                         <a
-                          href={getXrplExplorerAddressUrl(walletStr)}
+                          href={getXrplExplorerAddressUrl(walletStr, isTestnet)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-[#E6007A] hover:text-[#C40066] underline font-mono"
@@ -47,7 +49,7 @@ export function XrplProviderWallets() {
                         </a>
                       ) : isEthereumAddress ? (
                         <a
-                          href={getExplorerAddressUrl(walletStr)}
+                          href={getExplorerAddressUrl(walletStr, isTestnet)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-[#E6007A] hover:text-[#C40066] underline font-mono"
