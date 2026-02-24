@@ -1,15 +1,17 @@
 'use client'
 
 import { useReadIMasterAccountController } from '@flarenetwork/flare-wagmi-periphery-package/contracts/coston2'
-import { MASTER_ACCOUNT_CONTROLLER_ADDRESS } from '../lib/constants'
+import { useMasterAccountControllerAddress } from './useMasterAccountControllerAddress'
 
 export function usePersonalAccount(xrplAddress?: string) {
+  const { masterAccountControllerAddress } = useMasterAccountControllerAddress()
+
   const { data: personalAccount, isLoading, error } = useReadIMasterAccountController({
-    address: MASTER_ACCOUNT_CONTROLLER_ADDRESS,
+    address: masterAccountControllerAddress,
     functionName: 'getPersonalAccount',
     args: xrplAddress ? [xrplAddress] : undefined,
     query: {
-      enabled: !!xrplAddress,
+      enabled: !!xrplAddress && !!masterAccountControllerAddress,
     },
   })
 

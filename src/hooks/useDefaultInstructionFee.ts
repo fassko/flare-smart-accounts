@@ -1,11 +1,13 @@
 'use client'
 
 import { useReadIMasterAccountController } from '@flarenetwork/flare-wagmi-periphery-package/contracts/coston2'
-import { MASTER_ACCOUNT_CONTROLLER_ADDRESS } from '../lib/constants'
+import { useMasterAccountControllerAddress } from './useMasterAccountControllerAddress'
 
 export function useDefaultInstructionFee() {
+  const { masterAccountControllerAddress } = useMasterAccountControllerAddress()
+
   const { data: fee, isLoading, error } = useReadIMasterAccountController({
-    address: MASTER_ACCOUNT_CONTROLLER_ADDRESS,
+    address: masterAccountControllerAddress,
     functionName: 'getDefaultInstructionFee',
   })
 

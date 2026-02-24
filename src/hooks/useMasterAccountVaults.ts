@@ -3,14 +3,16 @@
 import { useReadIMasterAccountController } from '@flarenetwork/flare-wagmi-periphery-package/contracts/coston2'
 import { useReadContracts } from 'wagmi'
 import { erc20Abi, erc4626Abi, type Address } from 'viem'
-import { MASTER_ACCOUNT_CONTROLLER_ADDRESS } from '../lib/constants'
 import { getMergedVaults } from '../lib/vaultUtils'
+import { useMasterAccountControllerAddress } from './useMasterAccountControllerAddress'
 
 const fullVaultAbi = [...erc20Abi, ...erc4626Abi]
 
 export function useMasterAccountVaults() {
+  const { masterAccountControllerAddress } = useMasterAccountControllerAddress()
+
   const { data: vaults, isLoading: isLoadingVaults, error: vaultsError } = useReadIMasterAccountController({
-    address: MASTER_ACCOUNT_CONTROLLER_ADDRESS,
+    address: masterAccountControllerAddress,
     functionName: 'getVaults',
   })
 
