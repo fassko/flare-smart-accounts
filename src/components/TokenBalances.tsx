@@ -4,6 +4,7 @@ import { useReadContracts } from 'wagmi'
 import { erc20Abi, type Address } from 'viem'
 import { useERC20Balance } from '../hooks/useTokenBalances'
 import { useFxrpTokenAddress } from '../hooks/useFxrpTokenAddress'
+import { useXrpPrice } from '../hooks/useXrpPrice'
 import { getExplorerAddressUrl, formatAddress } from '../lib/utils'
 import { useNetworkContext } from '../context/NetworkContext'
 
@@ -74,11 +75,19 @@ function FxrpTokenRow({ tokenAddress, accountAddress }: { tokenAddress: string; 
   )
 }
 
-function VaultTokenRow({ tokenAddress, accountAddress }: { tokenAddress: string; accountAddress: string }) {
+function VaultTokenRow({ tokenAddress, accountAddress, xrpPrice }: { tokenAddress: string; accountAddress: string; xrpPrice: number | undefined }) {
   const tokenData = useERC20Balance(tokenAddress, accountAddress)
   const { isTestnet } = useNetworkContext()
 
   if (!tokenData.balance || tokenData.balance === BigInt(0)) return null
+
+  const balanceNum = tokenData.decimals !== undefined
+    ? Number(tokenData.balance) / Math.pow(10, tokenData.decimals)
+    : undefined
+
+  const usdValue = balanceNum !== undefined && xrpPrice !== undefined
+    ? '$' + (balanceNum * xrpPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : '-'
 
   return (
     <tr className="hover:bg-gray-50">
@@ -101,6 +110,9 @@ function VaultTokenRow({ tokenAddress, accountAddress }: { tokenAddress: string;
       <td className="px-4 py-3 text-sm text-gray-700 font-mono">
         {tokenData.formattedBalance || '0'}
       </td>
+      <td className="px-4 py-3 text-sm text-gray-700 font-mono">
+        {usdValue}
+      </td>
     </tr>
   )
 }
@@ -109,6 +121,7 @@ export function TokenBalances({ accountAddress, vaultTokenAddresses = [] }: { ac
   const { fxrpAddress, isLoading: isLoadingFxrp } = useFxrpTokenAddress()
   const fxrpBalance = useERC20Balance(fxrpAddress || '', accountAddress)
   const { hasAnyBalance: hasVaultBalance, isLoading: isLoadingVaultBalances } = useVaultTokenBalances(vaultTokenAddresses, accountAddress)
+  const { price: xrpPrice } = useXrpPrice()
 
   const hasFxrpBalance = fxrpBalance.balance && fxrpBalance.balance > BigInt(0)
 
@@ -127,7 +140,7 @@ export function TokenBalances({ accountAddress, vaultTokenAddresses = [] }: { ac
                 <tr className="bg-gray-100 border-b border-gray-200">
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Symbol</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Address</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Balance</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Balance (XRP)</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Asset Name</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Asset Symbol</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Asset Manager</th>
@@ -151,12 +164,13 @@ export function TokenBalances({ accountAddress, vaultTokenAddresses = [] }: { ac
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Name</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Symbol</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Address</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Balance</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Balance (XRP)</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Balance (USD)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {vaultTokenAddresses.map((tokenAddress) => (
-                  <VaultTokenRow key={tokenAddress} tokenAddress={tokenAddress} accountAddress={accountAddress} />
+                  <VaultTokenRow key={tokenAddress} tokenAddress={tokenAddress} accountAddress={accountAddress} xrpPrice={xrpPrice} />
                 ))}
               </tbody>
             </table>

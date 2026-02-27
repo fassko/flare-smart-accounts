@@ -1,6 +1,7 @@
 'use client'
 
 import { useMasterAccountVaults } from '../hooks/useMasterAccountVaults'
+import { useXrpPrice } from '../hooks/useXrpPrice'
 import { formatUnits } from 'viem'
 import { getExplorerAddressUrl, formatAddress } from '../lib/utils'
 import { getVaultTypeName, getVaultTypeBadgeStyle } from '../lib/vaultUtils'
@@ -8,7 +9,8 @@ import { useNetworkContext } from '../context/NetworkContext'
 
 export function MasterAccountVaults() {
   const { vaults, isLoading, error } = useMasterAccountVaults()
-const { isTestnet } = useNetworkContext()
+  const { price: xrpPrice } = useXrpPrice()
+  const { isTestnet } = useNetworkContext()
 
   return (
     <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -30,7 +32,8 @@ const { isTestnet } = useNetworkContext()
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Name</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Symbol</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Token Address</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Supply</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Supply (XRP)</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Supply (USD)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -90,6 +93,11 @@ const { isTestnet } = useNetworkContext()
                     <td className="px-4 py-3 text-sm text-gray-700 font-mono">
                       {vault.totalSupply !== undefined && vault.decimals !== undefined
                         ? Number(formatUnits(vault.totalSupply, vault.decimals)).toLocaleString()
+                        : '-'}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700 font-mono">
+                      {vault.totalSupply !== undefined && vault.decimals !== undefined && xrpPrice !== undefined
+                        ? '$' + (Number(formatUnits(vault.totalSupply, vault.decimals)) * xrpPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                         : '-'}
                     </td>
                   </tr>
