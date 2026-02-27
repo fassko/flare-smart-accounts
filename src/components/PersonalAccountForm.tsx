@@ -96,7 +96,7 @@ export function PersonalAccountForm() {
                 >
                   {personalAccountStr}
                 </a>
-                <TokenBalances accountAddress={personalAccountStr} additionalTokenAddresses={vaultTokenAddresses} />
+                <TokenBalances accountAddress={personalAccountStr} vaultTokenAddresses={vaultTokenAddresses} />
                 <VaultBalances vaultsWithDetails={vaultsWithDetails} />
               </div>
             </div>
