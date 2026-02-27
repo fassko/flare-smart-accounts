@@ -12,6 +12,8 @@ export interface VaultWithDetails {
   symbol: string | undefined
   decimals: number | undefined
   balance: bigint | undefined
+  tokenAddress?: string
+  lpTokenAddress?: string
 }
 
 export function VaultBalances({ vaultsWithDetails }: { vaultsWithDetails: VaultWithDetails[] }) {

@@ -1,4 +1,5 @@
-import { VAULT_TYPES, VAULT_TYPE_BADGE_CLASSES } from './constants'
+import React from 'react'
+import { VAULT_TYPES, VAULT_TYPE_BADGE_CLASSES, VAULT_TYPE_BADGE_COLORS } from './constants'
 
 export function getVaultTypeName(vaultType: number | bigint | unknown): string {
   const type = typeof vaultType === 'bigint' ? Number(vaultType) : vaultType
@@ -8,6 +9,11 @@ export function getVaultTypeName(vaultType: number | bigint | unknown): string {
 export function getVaultTypeBadgeClasses(vaultType: number | bigint | unknown): string {
   const type = typeof vaultType === 'bigint' ? Number(vaultType) : vaultType
   return VAULT_TYPE_BADGE_CLASSES[type as keyof typeof VAULT_TYPE_BADGE_CLASSES] ?? 'bg-gray-100 text-gray-800'
+}
+
+export function getVaultTypeBadgeStyle(vaultType: number | bigint | unknown): React.CSSProperties {
+  const type = typeof vaultType === 'bigint' ? Number(vaultType) : vaultType
+  return VAULT_TYPE_BADGE_COLORS[type as keyof typeof VAULT_TYPE_BADGE_COLORS] ?? { backgroundColor: '#e5e7eb', color: '#1f2937' }
 }
 
 export function getMergedVaults(vaultsData: unknown): Array<{ vaultId: unknown; vaultAddress: unknown; vaultType: unknown }> {

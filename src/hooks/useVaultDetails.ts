@@ -7,40 +7,81 @@ import { useNetworkContext } from '../context/NetworkContext'
 
 const fullVaultAbi = [...erc20Abi, ...erc4626Abi]
 
+const lpTokenAddressAbi = [
+  {
+    name: 'lpTokenAddress',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'address' }],
+  },
+] as const
+
+const UPSHIFT_VAULT_TYPE = 2
+
 export function useVaultDetails(personalAccountAddress?: string) {
   const { vaults, isLoading: isLoadingVaults, error: vaultsError } = useMasterAccountVaults()
   const { chainId } = useNetworkContext()
 
-  const { data: vaultDetails, isLoading: isLoadingDetails, error: detailsError } = useReadContracts({
-    contracts: vaults.flatMap((vault) => [
-      {
-        address: vault.vaultAddress as Address,
-        abi: fullVaultAbi,
-        functionName: 'name',
-        chainId,
-      },
-      {
-        address: vault.vaultAddress as Address,
-        abi: fullVaultAbi,
-        functionName: 'symbol',
-        chainId,
-      },
-      {
-        address: vault.vaultAddress as Address,
-        abi: fullVaultAbi,
-        functionName: 'decimals',
-        chainId,
-      },
-      {
-        address: vault.vaultAddress as Address,
-        abi: fullVaultAbi,
-        functionName: 'balanceOf',
-        args: [personalAccountAddress as Address],
-        chainId,
-      },
-    ]),
+  const upshiftVaults = vaults.filter((v) => Number(v.vaultType) === UPSHIFT_VAULT_TYPE)
+
+  const { data: lpTokenAddresses, isLoading: isLoadingLpTokens } = useReadContracts({
+    contracts: upshiftVaults.map((vault) => ({
+      address: vault.vaultAddress as Address,
+      abi: lpTokenAddressAbi,
+      functionName: 'lpTokenAddress' as const,
+      chainId,
+    })),
     query: {
-      enabled: vaults.length > 0 && !!personalAccountAddress,
+      enabled: upshiftVaults.length > 0,
+    },
+  })
+
+  // Build a map from vaultAddress -> lpTokenAddress for Upshift vaults
+  const lpTokenMap = new Map<string, Address>()
+  upshiftVaults.forEach((vault, i) => {
+    const result = lpTokenAddresses?.[i]
+    if (result?.status === 'success' && result.result) {
+      lpTokenMap.set((vault.vaultAddress as string).toLowerCase(), result.result as Address)
+    }
+  })
+
+  const { data: vaultDetails, isLoading: isLoadingDetails, error: detailsError } = useReadContracts({
+    contracts: vaults.flatMap((vault) => {
+      const isUpshift = Number(vault.vaultType) === UPSHIFT_VAULT_TYPE
+      const lpToken = lpTokenMap.get((vault.vaultAddress as string).toLowerCase())
+      const tokenAddress = (isUpshift && lpToken) ? lpToken : vault.vaultAddress as Address
+
+      return [
+        {
+          address: tokenAddress,
+          abi: fullVaultAbi,
+          functionName: 'name' as const,
+          chainId,
+        },
+        {
+          address: tokenAddress,
+          abi: fullVaultAbi,
+          functionName: 'symbol' as const,
+          chainId,
+        },
+        {
+          address: tokenAddress,
+          abi: fullVaultAbi,
+          functionName: 'decimals' as const,
+          chainId,
+        },
+        {
+          address: vault.vaultAddress as Address,
+          abi: fullVaultAbi,
+          functionName: 'balanceOf' as const,
+          args: [personalAccountAddress as Address],
+          chainId,
+        },
+      ]
+    }),
+    query: {
+      enabled: vaults.length > 0 && !!personalAccountAddress && !isLoadingLpTokens,
     },
   })
 
@@ -61,7 +102,7 @@ export function useVaultDetails(personalAccountAddress?: string) {
 
   return {
     vaultsWithDetails,
-    isLoading: isLoadingVaults || isLoadingDetails,
+    isLoading: isLoadingVaults || isLoadingLpTokens || isLoadingDetails,
     error: vaultsError || detailsError,
   }
 }

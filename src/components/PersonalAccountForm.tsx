@@ -22,6 +22,10 @@ export function PersonalAccountForm() {
     isValidAddress ? personalAccountStr : undefined
   )
 
+  const vaultTokenAddresses = vaultsWithDetails
+    .filter((v) => v.tokenAddress)
+    .map((v) => v.tokenAddress as string)
+
   const isLoading = isLoadingAccount || isLoadingVaults
   const error = accountError || vaultsError
 
@@ -92,7 +96,7 @@ export function PersonalAccountForm() {
                 >
                   {personalAccountStr}
                 </a>
-                <TokenBalances accountAddress={personalAccountStr} />
+                <TokenBalances accountAddress={personalAccountStr} additionalTokenAddresses={vaultTokenAddresses} />
                 <VaultBalances vaultsWithDetails={vaultsWithDetails} />
               </div>
             </div>

@@ -13,4 +13,9 @@ export const VAULT_TYPES = {
 export const VAULT_TYPE_BADGE_CLASSES = {
   1: 'bg-orange-100 text-orange-800',
   2: 'bg-green-100 text-green-800',
+} as const
+
+export const VAULT_TYPE_BADGE_COLORS = {
+  1: { backgroundColor: '#E55A00', color: '#ffffff' },
+  2: { backgroundColor: '#00AA44', color: '#ffffff' },
 } as const;

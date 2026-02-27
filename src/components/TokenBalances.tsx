@@ -49,17 +49,21 @@ function ERC20TokenRow({ tokenAddress, accountAddress }: { tokenAddress: string;
   )
 }
 
-export function TokenBalances({ accountAddress }: { accountAddress: string }) {
+export function TokenBalances({ accountAddress, additionalTokenAddresses = [] }: { accountAddress: string; additionalTokenAddresses?: string[] }) {
   const { fxrpAddress, isLoading: isLoadingFxrp } = useFxrpTokenAddress()
   const fxrpBalance = useERC20Balance(fxrpAddress || '', accountAddress)
 
-  const hasTokenBalance = fxrpBalance.balance && fxrpBalance.balance > BigInt(0)
+  const hasFxrpBalance = fxrpBalance.balance && fxrpBalance.balance > BigInt(0)
 
   if (isLoadingFxrp || fxrpBalance.isLoading) {
     return null
   }
 
-  if (!fxrpAddress || !hasTokenBalance) {
+  if (!fxrpAddress && additionalTokenAddresses.length === 0) {
+    return null
+  }
+
+  if (!hasFxrpBalance && additionalTokenAddresses.length === 0) {
     return null
   }
 
@@ -79,7 +83,10 @@ export function TokenBalances({ accountAddress }: { accountAddress: string }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            <ERC20TokenRow tokenAddress={fxrpAddress} accountAddress={accountAddress} />
+            {fxrpAddress && <ERC20TokenRow tokenAddress={fxrpAddress} accountAddress={accountAddress} />}
+            {additionalTokenAddresses.map((tokenAddress) => (
+              <ERC20TokenRow key={tokenAddress} tokenAddress={tokenAddress} accountAddress={accountAddress} />
+            ))}
           </tbody>
         </table>
       </div>
