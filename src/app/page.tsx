@@ -20,6 +20,35 @@ export default function Home() {
           <SmartAccount />
         </div>
       </main>
+
+      <footer className="border-t border-gray-200 mt-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex justify-center gap-6 text-sm text-gray-500">
+          <a
+            href="https://github.com/fassko/flare-smart-accounts"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-900 transition-colors"
+          >
+            GitHub
+          </a>
+          <a
+            href="https://x.com/FlareNetworks"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-900 transition-colors"
+          >
+            @FlareNetworks
+          </a>
+          <a
+            href="https://x.com/FlareDevHub"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-900 transition-colors"
+          >
+            @FlareDevHub
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
