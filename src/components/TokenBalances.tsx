@@ -123,7 +123,7 @@ export function TokenBalances({ accountAddress, vaultTokenAddresses = [] }: { ac
   const { hasAnyBalance: hasVaultBalance, isLoading: isLoadingVaultBalances } = useVaultTokenBalances(vaultTokenAddresses, accountAddress)
   const { price: xrpPrice } = useXrpPrice()
 
-  const hasFxrpBalance = fxrpBalance.balance && fxrpBalance.balance > BigInt(0)
+  const hasFxrpBalance = Boolean(fxrpBalance.balance && fxrpBalance.balance > BigInt(0))
 
   if (isLoadingFxrp || fxrpBalance.isLoading) {
     return null
