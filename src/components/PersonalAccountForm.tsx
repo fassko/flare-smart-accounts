@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { usePersonalAccount } from '../hooks/usePersonalAccount'
 import { useVaultDetails } from '../hooks/useVaultDetails'
+import { usePersonalAccountReaderBalances } from '../hooks/usePersonalAccountReaderBalances'
 import { getExplorerAddressUrl, getXrplExplorerAddressUrl, formatAddress, isXrplAddress } from '../lib/utils'
 import { TokenBalances } from './TokenBalances'
 import { VaultBalances } from './VaultBalances'
@@ -22,9 +23,17 @@ export function PersonalAccountForm() {
     isValidAddress ? personalAccountStr : undefined
   )
 
-  const vaultTokenAddresses = vaultsWithDetails
+  const { vaultBalances: vaultReaderBalances } = usePersonalAccountReaderBalances(
+    isValidAddress ? personalAccountStr : undefined
+  )
+
+  const vaultItems = vaultsWithDetails
     .filter((v) => v.tokenAddress)
-    .map((v) => v.tokenAddress as string)
+    .map((v) => ({
+      tokenAddress: v.tokenAddress as string,
+      vaultId: v.vaultId as bigint,
+      vaultType: Number(v.vaultType),
+    }))
 
   const isLoading = isLoadingAccount || isLoadingVaults
   const error = accountError || vaultsError
@@ -96,7 +105,7 @@ export function PersonalAccountForm() {
                 >
                   {personalAccountStr}
                 </a>
-                <TokenBalances accountAddress={personalAccountStr} vaultTokenAddresses={vaultTokenAddresses} />
+                <TokenBalances accountAddress={personalAccountStr} vaultItems={vaultItems} vaultReaderBalances={vaultReaderBalances} />
                 <VaultBalances vaultsWithDetails={vaultsWithDetails} />
               </div>
             </div>
