@@ -1,13 +1,20 @@
 import { flare, flareTestnet } from '@wagmi/chains'
+import { isValidAddress } from 'xrpl'
 
 const XRPL_TESTNET_EXPLORER_URL = 'https://testnet.xrpl.org'
 const XRPL_MAINNET_EXPLORER_URL = 'https://livenet.xrpl.org'
 
 /**
- * Check if an address is an XRPL address (starts with 'r' and is base58 encoded)
+ * Check if an address is a valid XRPL address (classic or X-address).
+ * Uses xrpl.js built-in validation with checksum verification.
  */
 export function isXrplAddress(address: string): boolean {
-  return /^r[1-9A-HJ-NP-Za-km-z]{25,34}$/.test(address)
+  if (!address || typeof address !== 'string') return false
+  try {
+    return isValidAddress(address.trim())
+  } catch {
+    return false
+  }
 }
 
 /**

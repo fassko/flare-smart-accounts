@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { usePersonalAccount } from '../hooks/usePersonalAccount'
+import { useXrplOwner } from '../hooks/useXrplOwner'
 import { useVaultDetails } from '../hooks/useVaultDetails'
 import { usePersonalAccountReaderBalances } from '../hooks/usePersonalAccountReaderBalances'
 import { getExplorerAddressUrl, getXrplExplorerAddressUrl, formatAddress, isXrplAddress } from '../lib/utils'
@@ -27,6 +28,10 @@ export function PersonalAccountForm() {
     isValidAddress ? personalAccountStr : undefined
   )
 
+  const { isSmartAccount, isLoading: isLoadingSmartAccountCheck } = useXrplOwner(
+    isValidAddress ? personalAccountStr : undefined
+  )
+
   const vaultItems = vaultsWithDetails
     .filter((v) => v.tokenAddress)
     .map((v) => ({
@@ -35,7 +40,7 @@ export function PersonalAccountForm() {
       vaultType: Number(v.vaultType),
     }))
 
-  const isLoading = isLoadingAccount || isLoadingVaults
+  const isLoading = isLoadingAccount || isLoadingVaults || (isValidAddress && isLoadingSmartAccountCheck)
   const error = accountError || vaultsError
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -93,9 +98,14 @@ export function PersonalAccountForm() {
             <p className="text-gray-800">Loading personal account...</p>
           ) : error ? (
             <p className="text-red-600">Error: {error.message}</p>
-          ) : personalAccountStr && isValidAddress ? (
+          ) : personalAccountStr && isValidAddress && isSmartAccount ? (
             <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-2">Personal Account:</h3>
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-sm font-semibold text-gray-900">Personal Account:</h3>
+                <span className="px-2 py-0.5 text-xs font-medium bg-[#E6007A]/10 text-[#E6007A] rounded-full border border-[#E6007A]/30">
+                  Smart Account
+                </span>
+              </div>
               <div>
                 <a
                   href={getExplorerAddressUrl(personalAccountStr, isTestnet)}
@@ -109,6 +119,8 @@ export function PersonalAccountForm() {
                 <VaultBalances vaultsWithDetails={vaultsWithDetails} />
               </div>
             </div>
+          ) : personalAccountStr && isValidAddress && !isSmartAccount ? (
+            <p className="text-red-600">Address is not a smart account!</p>
           ) : (
             <p className="text-gray-600">No personal account found for this XRPL address</p>
           )}
